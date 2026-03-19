@@ -67,15 +67,7 @@ public class Book extends BaseEntity {
         this.status = status;
     }
 
-    @PrePersist
-    private void prePersist() {
-        // 저자 없으면 기본값 세팅
-        if (this.author == null || this.author.trim().isEmpty()) {
-            this.author = "작자 미상";
-        }
-        // status가 null이면 기본값 AVAILABLE로 세팅
-        if (this.status == null) {
-            this.status = BookStatus.AVAILABLE;
-        }
+    public void rent(){
+        this.status = BookStatus.RENTED;
     }
 }
