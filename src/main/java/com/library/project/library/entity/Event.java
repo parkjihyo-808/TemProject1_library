@@ -1,8 +1,7 @@
-package com.library.project.library.entity;
+package com.busanit501.project_library.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+// ↓↓↓ 누나의 진짜 테이블 이름인 'library_event'로 설정! ↓↓↓
 @Table(name = "library_event")
 public class Event {
 
