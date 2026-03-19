@@ -36,4 +36,7 @@ public class Book {
     private List<Rental> rentals = new ArrayList<>();
 
 
+    public void rent(){
+        this.status = BookStatus.RENTED;
+    }
 }
