@@ -24,3 +24,14 @@ public class BookController {
         model.addAttribute("responseDTO", responseDTO);
     }
 }
+
+/*
+ * ========== BookController 설명 ==========
+ * - 역할: 도서 관련 화면(View) 요청을 처리하는 컨트롤러
+ * - URL 패턴: /book/booklist
+ *
+ * [메서드]
+ * - list(): GET /book/booklist → 도서 목록 페이지 (booklist.html)
+ *   PageRequestDTO로 페이징/검색/정렬 정보를 받아 BookService.list() 호출
+ *   결과를 responseDTO로 뷰에 전달
+ */

@@ -35,3 +35,14 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     @Query("SELECT r.book.id FROM Recommend r WHERE r.book.id IN :bookIds")
     List<Long> findBookIdsByBookIdIn(@Param("bookIds") Collection<Long> bookIds);
 }
+
+/*
+ * ========== RecommendRepository 설명 ==========
+ * - 역할: Recommend 엔티티의 DB 접근을 담당하는 리포지토리
+ * - 쓰이는 곳: BookServiceImpl에서 사용
+ *
+ * [메서드]
+ * - existsByBook_Id(): 특정 bookId에 추천 기록이 있는지 확인 → 단건 조회 시 추천 여부 (BookServiceImpl.getBook())
+ * - deleteByBook_Id(): 특정 bookId의 추천 기록 전부 삭제 → 추천 해제 (BookServiceImpl.unrecommend())
+ * - findBookIdsByBookIdIn(): bookId 목록을 IN 쿼리로 한 번에 조회 → 목록 화면 배치 조회 최적화 (BookServiceImpl.list())
+ */

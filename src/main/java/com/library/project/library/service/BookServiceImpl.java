@@ -251,3 +251,26 @@ public class BookServiceImpl implements BookService {
     // ─────────────────────────────────────────────────────────────────
 
 }
+
+/*
+ * ========== BookServiceImpl 설명 ==========
+ * - 역할: BookService 인터페이스의 구현체. 도서 조회/추천 비즈니스 로직 처리
+ * - 쓰이는 곳: BookController, BookRestController에서 주입받아 사용
+ *
+ * [의존성]
+ * - BookRepository: 도서 DB 접근
+ * - RecommendRepository: 추천 기록 DB 접근
+ * - ModelMapper: Entity ↔ DTO 변환
+ * - KoreanDecomposer: 한글 검색어 정규화/초성 변환
+ *
+ * [메서드]
+ * - list(): 도서 목록 페이징 조회. 핵심 로직:
+ *   1) 검색어 정규화/초성 변환
+ *   2) QueryDSL로 isbn 중복 제거 + 검색 + 정렬 + 페이징
+ *   3) isbn/bookId 배치 조회로 쿼리 최적화 (N+1 방지)
+ *   4) Book → BookDTO 변환 (status, recommended 세팅)
+ *
+ * - getBook(): 단건 조회. isbn 기준 대여 가능 여부 + 추천 여부 포함
+ * - recommend(): Recommend 테이블에 row 추가
+ * - unrecommend(): Recommend 테이블에서 해당 bookId row 전부 삭제 (@Transactional 필수)
+ */

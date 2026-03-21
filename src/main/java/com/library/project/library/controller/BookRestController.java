@@ -67,3 +67,15 @@ public class BookRestController {
         bookService.unrecommend(bookId);
     }
 }
+
+/*
+ * ========== BookRestController 설명 ==========
+ * - 역할: 도서 관련 REST API 요청을 처리하는 컨트롤러 (JSON 응답)
+ * - 쓰이는 곳: 프론트엔드 JavaScript(axios)에서 AJAX 호출
+ *
+ * [메서드]
+ * - getBook(): GET /book/{bookId} → 도서 단건 상세 조회 (상세보기 모달용)
+ * - getBookList(): GET /book/list → 도서 목록 JSON 조회 (axios 페이징용)
+ * - recommend(): POST /book/recommend/{bookId} → 추천하기 (Recommend 테이블에 row 추가)
+ * - unrecommend(): DELETE /book/recommend/{bookId} → 추천 해제 (Recommend 테이블에서 row 삭제)
+ */

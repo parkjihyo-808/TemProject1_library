@@ -42,3 +42,15 @@ public class ApplyServiceImpl implements ApplyService {
         return result.getAno(); // 저장된 번호 반환
     }
 }
+
+/*
+ * ========== ApplyServiceImpl 설명 ==========
+ * - 역할: ApplyService 인터페이스의 구현체. 대관 신청서 등록 처리
+ * - 쓰이는 곳: ApplyController에서 주입받아 사용
+ *
+ * [register() 동작]
+ * 1. ApplyDTO → ApplyEntity 변환 (Builder 패턴)
+ * 2. mid가 null이면 임시값 "test_user" 세팅 (로그인 연동 전 임시 처리)
+ * 3. eventContent/inquiryContent가 비어있으면 기본값 세팅
+ * 4. DB 저장 후 생성된 ano(신청 번호) 반환
+ */

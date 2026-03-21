@@ -48,3 +48,25 @@ public class Member extends BaseEntity {
 
 
 }
+
+/*
+ * ========== Member 엔티티 설명 ==========
+ * - 역할: 도서관 회원 정보를 저장하는 엔티티
+ * - 쓰이는 곳: MemberRepository, MemberServiceImpl, MemberController, RentalService에서 사용
+ *
+ * [주요 필드]
+ * - id: DB 자동생성 PK (내부 관리용)
+ * - mid: 로그인 아이디 (unique, 중복 불가)
+ * - mpw: 비밀번호
+ * - mname: 회원 이름
+ * - email: 이메일 주소
+ * - region: 지역
+ * - role: 권한 (USER / ADMIN)
+ * - regDate, modDate: BaseEntity 상속 (생성일, 수정일)
+ *
+ * [메서드]
+ * - change(): 회원 정보 수정 (마이페이지에서 이름/이메일/지역/비밀번호 변경 시 호출)
+ *
+ * [내부 enum]
+ * - Role: USER(일반 회원), ADMIN(관리자) 구분
+ */

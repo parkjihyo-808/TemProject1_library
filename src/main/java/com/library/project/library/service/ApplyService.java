@@ -6,3 +6,13 @@ import com.library.project.library.dto.ApplyDTO;
 public interface ApplyService {
     Long register(ApplyDTO applyDTO);
 }
+
+/*
+ * ========== ApplyService 설명 ==========
+ * - 역할: 시설 대관 신청 비즈니스 로직 인터페이스
+ * - 구현체: ApplyServiceImpl
+ * - 쓰이는 곳: ApplyController에서 주입받아 사용
+ *
+ * [메서드]
+ * - register(): 대관 신청서 등록 → 생성된 신청 번호(ano) 반환
+ */

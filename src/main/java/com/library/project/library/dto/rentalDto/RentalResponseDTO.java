@@ -30,3 +30,20 @@ public class RentalResponseDTO {
                 .build();
     }
 }
+
+/*
+ * ========== RentalResponseDTO 설명 ==========
+ * - 역할: 대출 정보를 프론트에 응답할 때 사용하는 DTO
+ * - 쓰이는 곳: RentalService.getUserRentals()에서 Rental → RentalResponseDTO 변환 후 RentalController에서 반환
+ *
+ * [주요 필드]
+ * - rentId: 대출 PK
+ * - memberId / bookId: 회원 ID / 도서 ID
+ * - rentalDate: 대출일
+ * - dueDate: 반납 예정일
+ * - returnDate: 실제 반납일
+ * - status: 대출 상태 (RENTED / RETURNED)
+ *
+ * [메서드]
+ * - from(Rental): Rental 엔티티를 RentalResponseDTO로 변환하는 정적 팩토리 메서드
+ */

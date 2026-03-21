@@ -20,3 +20,15 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     // 카테고리가 'M'이고 제목에 키워드가 포함된 데이터를 페이징 처리해서 가져오기
     Page<Event> findByCategoryAndTitleContaining(String category, String title, Pageable pageable);
 }
+
+/*
+ * ========== EventRepository 설명 ==========
+ * - 역할: Event 엔티티의 DB 접근을 담당하는 리포지토리
+ * - 쓰이는 곳: EventServiceImpl에서 사용
+ *
+ * [메서드]
+ * - findByCategory(): 카테고리별 행사 목록 페이징 조회 → 강좌(G) 또는 영화(M) 목록
+ * - findByTitleContainingAndCategory(): 제목 검색 + 카테고리 필터 → 강좌 검색
+ * - findByCategoryNot(): 특정 카테고리 제외 조회 → 영화(M) 제외한 행사 목록
+ * - findByCategoryAndTitleContaining(): 카테고리 고정 + 제목 검색 → 주말 극장 영화 검색
+ */

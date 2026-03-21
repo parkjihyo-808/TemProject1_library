@@ -40,3 +40,13 @@ public class ApplyController {
         return "redirect:/apply/spaceReservation";
     }
 }
+
+/*
+ * ========== ApplyController 설명 ==========
+ * - 역할: 시설 대관 신청 관련 화면 + 등록 처리 컨트롤러
+ * - URL 패턴: /apply/**
+ *
+ * [메서드]
+ * - getInfoPage(): GET /apply/spaceReservation → 대관 신청 페이지 (spaceReservation.html)
+ * - registerPost(): POST /apply/register → 대관 신청서 등록 처리 (성공 시 신청번호 포함 메시지 전달)
+ */
