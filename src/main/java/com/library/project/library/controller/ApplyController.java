@@ -105,3 +105,15 @@ public class ApplyController {
     }
 
 }
+
+/*
+ * ========== ApplyController 설명 ==========
+ * - 역할: 시설 대관 신청 관련 화면 + 등록 처리 컨트롤러
+ * - URL 패턴: /apply/**
+ *
+ * [메서드]
+ * - getInfoPage(): GET /apply/spaceReservation → 대관 신청 페이지 (spaceReservation.html)
+ * - registerPost(): POST /apply/register → 대관 신청서 등록 처리 (성공 시 신청번호 포함 메시지 전달)
+ * - getMyFacilityList(): GET /apply/myFacilityList → 내 시설 예약 신청 내역 목록 (member/myFacilityList.html)
+ * - readApi(): GET /apply/readApi → Ajax용 신청 상세 조회 API (JSON 반환)
+ */

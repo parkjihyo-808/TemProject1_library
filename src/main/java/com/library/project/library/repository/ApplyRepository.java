@@ -17,3 +17,10 @@ public interface ApplyRepository extends JpaRepository<ApplyEntity, Long> {
 
 
 }
+
+/*
+ * ========== ApplyRepository 설명 ==========
+ * - 역할: ApplyEntity(시설 대관 신청)의 DB 접근을 담당하는 리포지토리
+ * - 쓰이는 곳: ApplyServiceImpl에서 사용
+ * - JpaRepository 상속만으로 기본 CRUD (save, findById, findAll, deleteById) 사용 가능
+ */

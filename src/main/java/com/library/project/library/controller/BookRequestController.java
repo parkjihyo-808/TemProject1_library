@@ -50,3 +50,16 @@ public class BookRequestController {
     }
 
 }
+
+/*
+ * ========== BookRequestController 설명 ==========
+ * - 역할: 도서 대출 신청 관련 REST API 컨트롤러
+ * - URL 패턴: /api/requests/**
+ *
+ * [메서드]
+ * - requestBook(): POST /api/requests → 대출 신청 (회원)
+ * - getPendingRequests(): GET /api/requests → PENDING 상태 신청 목록 조회 (관리자)
+ * - approveRequest(): POST /api/requests/{id}/approve → 신청 승인 (관리자)
+ * - rejectRequest(): POST /api/requests/{id}/reject → 신청 거절 (관리자)
+ * - getMyRequests(): GET /api/requests/member/{memberId} → 회원별 신청 목록 조회
+ */

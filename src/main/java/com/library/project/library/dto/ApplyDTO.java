@@ -26,3 +26,19 @@ public class ApplyDTO {
     private String inquiryContent;  // 행사 상세 내용
     private LocalDateTime regDate; // 등록 시간
 }
+
+/*
+ * ========== ApplyDTO 설명 ==========
+ * - 역할: 시설 대관 신청 데이터를 화면에서 서버로 전달하는 DTO
+ * - 쓰이는 곳: ApplyController, ApplyServiceImpl에서 사용
+ *
+ * [주요 필드]
+ * - mid: 신청자 회원 아이디
+ * - applicantName / phone: 신청자 정보
+ * - eventName: 행사명
+ * - facilityType: 시설 종류
+ * - participants: 참석 인원
+ * - applyDate / applyTime: 희망 일시
+ * - eventContent: 행사 상세 내용
+ * - inquiryContent: 문의사항
+ */

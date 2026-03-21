@@ -25,3 +25,14 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         return true; // 로그인 되어 있으면 통과!
     }
 }
+
+/*
+ * ========== LoginCheckInterceptor 설명 ==========
+ * - 역할: 로그인이 필요한 페이지 접근 시 세션 체크를 수행하는 인터셉터
+ * - 등록 위치: CustomServletConfig.addInterceptors()에서 등록
+ * - 적용 경로: /member/mypage, /member/modify
+ *
+ * [preHandle() 동작]
+ * - 세션에 "loginInfo"가 없으면 → /member/login으로 리다이렉트 (false 반환, 컨트롤러 진입 차단)
+ * - 세션에 "loginInfo"가 있으면 → 통과 (true 반환, 컨트롤러 정상 진입)
+ */
