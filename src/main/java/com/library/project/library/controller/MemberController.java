@@ -320,12 +320,24 @@ public class MemberController {
     // 13. 비밀번호 찾기 - 본인 확인 후 변경 페이지 이동 (POST)
     // =====================================================================
     @PostMapping("/find-pw")
-    public String findPwPost(String mid, String email, Model model, RedirectAttributes redirectAttributes) {
+    /*public String findPwPost(String mid, String email, Model model, RedirectAttributes redirectAttributes) {
         log.info("비밀번호 찾기 시도: mid=" + mid + ", email=" + email);
 
         if (memberService.checkMemberForPw(mid, email)) {
             model.addAttribute("mid", mid);
             return "member/change-pw";
+        }
+
+        log.warn("비밀번호 찾기 실패: 정보 불일치");
+        redirectAttributes.addFlashAttribute("errorPw", "fail");
+        return "redirect:/member/find";
+    }*/
+    public String findPwPost(String mid, String email, RedirectAttributes redirectAttributes) {
+        log.info("비밀번호 찾기 시도: mid=" + mid + ", email=" + email);
+
+        if (memberService.checkMemberForPw(mid, email)) {
+            redirectAttributes.addFlashAttribute("verifiedMid", mid);
+            return "redirect:/member/modify";  // modify 페이지로 이동 + 모달 자동 오픈
         }
 
         log.warn("비밀번호 찾기 실패: 정보 불일치");
