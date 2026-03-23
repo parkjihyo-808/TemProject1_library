@@ -82,7 +82,7 @@ public class InfoServiceImpl implements InfoService {
                 .build();
     }
 }
-}
+
 
 /*
  * ========== InfoServiceImpl 설명 ==========
