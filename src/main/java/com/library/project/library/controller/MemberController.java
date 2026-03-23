@@ -4,6 +4,8 @@ import com.library.project.library.dto.MemberDTO;
 import com.library.project.library.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -102,6 +104,7 @@ public class MemberController {
     }
 
     // 로그아웃 화면 (GET)
+    /*
     @GetMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
         log.info("MemberController - logout() 실행. 로그아웃 되었습니다.");
@@ -114,6 +117,27 @@ public class MemberController {
 
         return "redirect:/member/login";
     }
+    */
+    // 20260323 수정후
+    @GetMapping("/logout")
+    public String logout(HttpSession session, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        log.info("MemberController - logout() 실행. 로그아웃 되었습니다.");
+
+        // ✅ 1. 서버 세션 무효화
+        if (session != null) {
+            session.invalidate();
+        }
+
+        // ✅ 2. 브라우저 JSESSIONID 쿠키 직접 삭제
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setMaxAge(0);      // 즉시 만료
+        cookie.setPath("/");      // 생성된 path와 동일하게
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+
+        redirectAttributes.addFlashAttribute("logout", "success");
+        return "redirect:/member/login";
+    }
 
 
 
@@ -121,11 +145,26 @@ public class MemberController {
 //    @Tag(name = "내 서재 (마이페이지) (GET)",
 //            description = "내 서재 (마이페이지)")
     @Operation(summary = "내 서재 (마이페이지) (GET) 테스트", description = "내 서재 (마이페이지) (GET) 테스트")
+    /*
     @GetMapping("/mypage")
     public void myPage(String mid, Model model) {
         MemberDTO memberDTO = memberService.readOne(mid);
         model.addAttribute("dto", memberDTO);
     }
+    */
+    @GetMapping("/mypage")
+    public String myPage(String mid, HttpSession session, Model model) {
+        // ✅ 세션에서 직접 꺼내서 검증
+        MemberDTO loginInfo = (MemberDTO) session.getAttribute("loginInfo");
+        if (loginInfo == null) {
+            return "redirect:/member/login";
+        }
+
+        MemberDTO memberDTO = memberService.readOne(mid);
+        model.addAttribute("dto", memberDTO);
+        return "member/mypage"; // void → String으로 변경
+    }
+
 
     // 정보 수정 화면 (GET)
 //    @Tag(name = "회원 정보 수정 화면 (GET)",

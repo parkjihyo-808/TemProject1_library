@@ -7,21 +7,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Log4j2
-public class LoginCheckInterceptor implements HandlerInterceptor {
+public class LoginCheckInterceptor_bk20260323 implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("--- 로그인 체크 인터셉터 실행 ---");
 
-        // ✅ 캐시 금지 (뒤로가기 방지)
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setDateHeader("Expires", 0);
-
-        // 수정전 - 세션 없으면 새로 만들어서 JSESSIONID 계속 발급됨
-        /*HttpSession session = request.getSession();*/
-        // 수정후 - false: 세션 없으면 새로 만들지 않고 null 반환
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
 
         // 세션에 loginInfo(로그인 정보)가 없으면 로그인 페이지로 튕겨내기
         if (session.getAttribute("loginInfo") == null) {
