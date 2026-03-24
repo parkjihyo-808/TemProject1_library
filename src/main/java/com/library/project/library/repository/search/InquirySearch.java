@@ -11,6 +11,7 @@ public interface InquirySearch {
     // 기존 전체 목록
     Page<Inquiry> searchAll(String[] types, String keyword, Pageable pageable);
 
+
     // 댓글 개수 포함 리스트
     Page<InquiryListReplyCountDTO> searchWithReplyCount(String[] types, String keyword, Pageable pageable);
 

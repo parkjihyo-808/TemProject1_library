@@ -78,6 +78,7 @@ public class NoticeServiceImpl implements NoticeService {
         // Querydsl을 이용한 검색 결과 가져오기
         Page<Notice> result = noticeRepository.searchAll(types, keyword, pageable);
 
+
         // Entity 리스트를 DTO 리스트로 변환
         java.util.List<NoticeDTO> dtoList = result.getContent().stream()
                 .map(this::entityToDto)

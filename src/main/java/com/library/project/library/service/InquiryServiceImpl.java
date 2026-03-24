@@ -97,13 +97,14 @@ public class InquiryServiceImpl implements InquiryService {
                 .build();
     }
 
-    
+
     // 3. 나의 문의 내역 조회 (댓글 개수 포함 버전)
     @Override
     public PageResponseDTO<InquiryListReplyCountDTO> getMyInquiryList(String mid, PageRequestDTO pageRequestDTO) {
 
         // 페이징 정보 생성 (기본적으로 글 번호 'ino' 역순 정렬)
         Pageable pageable = pageRequestDTO.getPageable("ino");
+
 
         // Querydsl 레포지토리의 searchMyList 호출 (아이디 필터링)
         Page<InquiryListReplyCountDTO> result = inquiryRepository.searchMyList(pageable, mid);
