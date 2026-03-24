@@ -17,27 +17,26 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-//@RestController
 @RequestMapping("/member")
 @Log4j2
 @RequiredArgsConstructor
-@Tag(name = "Member Controller", description = "회원 관련 화면 및 로그인/로그아웃 처리") // Swagger 노출용
+@Tag(name = "Member Controller", description = "회원 관련 화면 및 로그인/로그아웃 처리")
 public class MemberController {
 
     private final MemberService memberService;
 
+    // =====================================================================
     // 1. 회원가입 화면 (GET) - join.html 연결
-//    @Tag(name = "회원가입 화면 (GET) 테스트",
-//            description = "회원가입 화면")
+    // =====================================================================
     @GetMapping("/join")
     public void joinGet() {
         log.info("MemberController - joinGet() 진입 (join.html 호출)");
     }
 
+    // =====================================================================
     // 2. 회원가입 처리 (POST)
-//    @Tag(name = "회원가입 처리 (POST) 테스트",
-//            description = "회원가입 처리")
-    @Operation(summary = "회원가입 처리 (POST) 테스트", description = "회원가입 처리 (POST) 테스트")
+    // =====================================================================
+    @Operation(summary = "회원가입 처리 (POST)", description = "회원가입 처리 (POST)")
     @PostMapping("/join")
     public String joinPost(@Valid MemberDTO memberDTO,
                            BindingResult bindingResult,
@@ -45,7 +44,7 @@ public class MemberController {
 
         log.info("MemberController - joinPost() 처리 중: " + memberDTO);
 
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             log.info("유효성 검사 에러 발생");
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/member/join";
@@ -63,86 +62,123 @@ public class MemberController {
         return "redirect:/member/login";
     }
 
+    // =====================================================================
     // 3. 로그인 화면 (GET)
-//    @Tag(name = "로그인 화면 (GET) 테스트",
-//            description = "로그인 화면")
+    // =====================================================================
     @GetMapping("/login")
-    public void loginGet() {
+    /*public void loginGet() {
         log.info("MemberController - loginGet() 진입");
+    }*/
+    public String loginGet(
+            @CookieValue(value = "savedMid", defaultValue = "") String savedMid,
+            Model model) {
+        log.info("MemberController - loginGet() 진입");
+        model.addAttribute("savedMid", savedMid);
+        return "member/login";
     }
 
+    // =====================================================================
     // 4. 로그인 처리 (POST) - 세션 방식
-//    @Tag(name = "로그인 처리 (POST)",
-//            description = "로그인 처리")
-    @Operation(summary = "로그인 처리 (POST) 테스트", description = "로그인 처리 (POST) 테스트")
-    @PostMapping("/login")
+    // =====================================================================
+    @Operation(summary = "로그인 처리 (POST)", description = "로그인 처리 (POST)")
+    /*@PostMapping("/login")
     public String loginPost(String mid, String mpw, HttpSession session, RedirectAttributes redirectAttributes) {
         log.info("로그인 시도 아이디: " + mid);
 
         try {
             MemberDTO memberDTO = memberService.readOne(mid);
 
-            // 1. 비밀번호가 일치하면 (성공)
-            if(memberDTO.getMpw().equals(mpw)) {
-                /*session.setAttribute("loginInfo", memberDTO); // 세션에 저장
-                log.info("로그인 성공! 마이페이지로 이동합니다.");
+            // 1. 비밀번호 일치 → 로그인 성공
+            if (memberDTO.getMpw().equals(mpw)) {
+                session.setAttribute("loginInfo", memberDTO); // 세션에 저장
+                log.info("로그인 성공! 세션 저장 완료.");
 
-                // [중요] 성공 시 리턴 경로는 마이페이지입니다!
-                return "redirect:/member/mypage?mid=" + mid;*/
-
-                session.setAttribute("loginInfo", memberDTO);
-
-                // ⭐ 세션에 저장된 '가려던 주소(dest)'가 있는지 확인!
+                // 이전에 가려던 페이지(dest)가 있으면 그쪽으로, 없으면 마이페이지로
                 String dest = (String) session.getAttribute("dest");
-                session.removeAttribute("dest"); // 쓴 다음엔 지워주기
+                session.removeAttribute("dest"); // 사용 후 삭제
 
                 if (dest != null) {
-                    return "redirect:" + dest; // 원래 가려던 곳으로!
+                    log.info("이전 목적지로 이동: " + dest);
+                    return "redirect:" + dest;
                 }
-                return "redirect:/member/mypage?mid=" + mid; // 없으면 마이페이지로
+                // mid를 URL에 붙여서 보냄
+//                return "redirect:/member/mypage?mid=" + mid;
+                // mid 제거
+                return "redirect:/member/mypage";
             }
-            // 2. 비밀번호가 틀리면 (실패)
+            // 2. 비밀번호 불일치 → 실패
             else {
                 redirectAttributes.addFlashAttribute("error", "password");
-                return "redirect:/member/login"; // 다시 로그인 화면으로
+                return "redirect:/member/login";
             }
         }
-        // 3. 아이디가 아예 없으면 (실패)
+        // 3. 아이디 없음 → 실패
         catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "id");
-            return "redirect:/member/login"; // 다시 로그인 화면으로
+            return "redirect:/member/login";
+        }
+    }*/
+    @PostMapping("/login")
+    public String loginPost(String mid, String mpw,
+                            @RequestParam(defaultValue = "false") boolean rememberMe,
+                            HttpSession session,
+                            HttpServletResponse response,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            MemberDTO memberDTO = memberService.readOne(mid);
+
+            if (memberDTO.getMpw().equals(mpw)) {
+                session.setAttribute("loginInfo", memberDTO);
+                log.info("로그인 성공! 세션 저장 완료.");
+
+                // 아이디 저장 처리
+                if (rememberMe) {
+                    Cookie cookie = new Cookie("savedMid", mid);
+                    cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+                    cookie.setPath("/");
+                    cookie.setHttpOnly(true);
+                    response.addCookie(cookie);
+                } else {
+                    Cookie cookie = new Cookie("savedMid", null);
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
+                }
+
+                String dest = (String) session.getAttribute("dest");
+                session.removeAttribute("dest");
+                if (dest != null) {
+                    log.info("이전 목적지로 이동: " + dest);
+                    return "redirect:" + dest;
+                }
+                return "redirect:/member/mypage";
+            } else {
+                redirectAttributes.addFlashAttribute("error", "password");
+                return "redirect:/member/login";
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "id");
+            return "redirect:/member/login";
         }
     }
 
-    // 로그아웃 화면 (GET)
-    /*
-    @GetMapping("/logout")
-    public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
-        log.info("MemberController - logout() 실행. 로그아웃 되었습니다.");
-
-        // 세션 무효화 (모든 로그인 정보 삭제)
-        session.invalidate();
-
-        // 로그아웃 성공 메시지 전달 (선택사항)
-        redirectAttributes.addFlashAttribute("logout", "success");
-
-        return "redirect:/member/login";
-    }
-    */
-    // 20260323 수정후
+    // =====================================================================
+    // 5. 로그아웃 (GET)
+    // - 서버 세션 무효화 + 브라우저 JSESSIONID 쿠키 삭제
+    // =====================================================================
     @GetMapping("/logout")
     public String logout(HttpSession session, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         log.info("MemberController - logout() 실행. 로그아웃 되었습니다.");
 
-        // ✅ 1. 서버 세션 무효화
+        // 1. 서버 세션 무효화
         if (session != null) {
             session.invalidate();
         }
 
-        // ✅ 2. 브라우저 JSESSIONID 쿠키 직접 삭제
+        // 2. 브라우저 JSESSIONID 쿠키 직접 삭제
         Cookie cookie = new Cookie("JSESSIONID", null);
-        cookie.setMaxAge(0);      // 즉시 만료
-        cookie.setPath("/");      // 생성된 path와 동일하게
+        cookie.setMaxAge(0);       // 즉시 만료
+        cookie.setPath("/");       // 세션 생성 시 path와 동일하게
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
@@ -150,58 +186,71 @@ public class MemberController {
         return "redirect:/member/login";
     }
 
-
-
-    // 5. 내 서재 (마이페이지)
-//    @Tag(name = "내 서재 (마이페이지) (GET)",
-//            description = "내 서재 (마이페이지)")
-    @Operation(summary = "내 서재 (마이페이지) (GET) 테스트", description = "내 서재 (마이페이지) (GET) 테스트")
-    /*
+    // =====================================================================
+    // 6. 마이페이지 (GET)
+    // - 세션에서 loginInfo 검증 후 진입
+    // =====================================================================
+    @Operation(summary = "마이페이지 (GET)", description = "마이페이지 (GET)")
     @GetMapping("/mypage")
-    public void myPage(String mid, Model model) {
-        MemberDTO memberDTO = memberService.readOne(mid);
-        model.addAttribute("dto", memberDTO);
-    }
-    */
-    @GetMapping("/mypage")
-    public String myPage(String mid, HttpSession session, Model model) {
-        // ✅ 세션에서 직접 꺼내서 검증
+//    public String myPage(String mid, HttpSession session, Model model) {
+    public String myPage(HttpSession session, Model model) {
+
+        // 세션 검증 - loginInfo 없으면 로그인 페이지로
         MemberDTO loginInfo = (MemberDTO) session.getAttribute("loginInfo");
+        String mid = loginInfo.getMid();
+        // 인터셉터 에 기능이 있지만 혹시나
+//        사용자 접근
+//              ↓
+//        인터셉터가 먼저 loginInfo 체크
+//              ↓
+//        loginInfo 없으면 → 인터셉터가 /member/login으로 보냄 (컨트롤러 진입 못함)
+//              ↓
+//        loginInfo 있으면 → 컨트롤러 진입
+//              ↓
+//        myPage() 실행 (여기까지 왔으면 loginInfo는 무조건 존재)
         if (loginInfo == null) {
             return "redirect:/member/login";
         }
 
         MemberDTO memberDTO = memberService.readOne(mid);
         model.addAttribute("dto", memberDTO);
-        return "member/mypage"; // void → String으로 변경
+        return "member/mypage";
     }
 
-
-    // 정보 수정 화면 (GET)
-//    @Tag(name = "회원 정보 수정 화면 (GET)",
-//            description = "회원 정보 수정 화면")
-    @GetMapping("/modify")
+    // =====================================================================
+    // 7. 정보 수정 화면 (GET)
+    // =====================================================================
+    /*@GetMapping("/modify")
     public void modifyGet(String mid, Model model) {
         log.info("MemberController - modifyGet() 호출: " + mid);
         MemberDTO memberDTO = memberService.readOne(mid);
         model.addAttribute("dto", memberDTO);
+    }*/
+    @GetMapping("/modify")
+    public String modifyGet(HttpSession session, Model model) {
+        MemberDTO loginInfo = (MemberDTO) session.getAttribute("loginInfo");
+        String mid = loginInfo.getMid();
+        log.info("MemberController - modifyGet() 호출: " + mid);
+        MemberDTO memberDTO = memberService.readOne(mid);
+        model.addAttribute("dto", memberDTO);
+        return "member/modify";
     }
 
-    // 정보 수정 처리 (POST)
-//    @Tag(name = "회원 정보 수정 처리 (POST)",
-//            description = "회원 정보 수정 처리")
-    @Operation(summary = "회원 정보 수정 처리 (POST) 테스트", description = "회원 정보 수정 처리 (POST) 테스트")
+    // =====================================================================
+    // 8. 정보 수정 처리 (POST)
+    // - 수정 완료 후 세션 loginInfo도 최신 정보로 갱신
+    // =====================================================================
+    @Operation(summary = "회원 정보 수정 처리 (POST)", description = "회원 정보 수정 처리 (POST)")
     @PostMapping("/modify")
     public String modifyPost(@Valid MemberDTO memberDTO,
                              BindingResult bindingResult,
+                             HttpSession session,
                              RedirectAttributes redirectAttributes) {
 
         log.info("MemberController - modifyPost() 진행: " + memberDTO);
 
-        if(bindingResult.hasErrors()) {
-            // 로그에 어떤 필드에서 에러가 났는지 찍어줍니다.
+        if (bindingResult.hasErrors()) {
             log.info("수정 유효성 에러 상세내용: " + bindingResult.getAllErrors());
-
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             redirectAttributes.addAttribute("mid", memberDTO.getMid());
             return "redirect:/member/modify";
@@ -209,37 +258,53 @@ public class MemberController {
 
         try {
             memberService.modify(memberDTO);
+
+            // 세션 loginInfo 갱신 (수정된 정보로 업데이트)
+            MemberDTO updatedMember = memberService.readOne(memberDTO.getMid());
+            session.setAttribute("loginInfo", updatedMember);
+            log.info("세션 loginInfo 갱신 완료: " + updatedMember.getMid());
+
         } catch (Exception e) {
             log.error("수정 실패: " + e.getMessage());
-            return "redirect:/member/modify?mid=" + memberDTO.getMid();
+//            return "redirect:/member/modify?mid=" + memberDTO.getMid();
+            return "redirect:/member/modify";
         }
 
         redirectAttributes.addFlashAttribute("result", "modified");
-        return "redirect:/member/mypage?mid=" + memberDTO.getMid();
+//        return "redirect:/member/mypage?mid=" + memberDTO.getMid();
+        return "redirect:/member/mypage";
     }
 
-    // 아이디 중복 체크
+    // =====================================================================
+    // 9. 아이디 중복 체크 (AJAX)
+    // =====================================================================
+    @Operation(summary = "아이디 중복 체크 (GET)", description = "아이디 중복 체크 (GET)")
     @GetMapping("/checkId")
     @ResponseBody
     public String checkId(String mid) {
         boolean exists = memberService.checkId(mid);
-        // [체크!] exists가 true(있다)이면 "exist", false(없다)이면 "ok"가 맞나요?
         return exists ? "exist" : "ok";
     }
-    // 이메일 중복 체크
+
+    // =====================================================================
+    // 10. 이메일 중복 체크 (AJAX)
+    // =====================================================================
     @GetMapping("/checkEmail")
     @ResponseBody
     public String checkEmail(String email) {
         return memberService.checkEmail(email) ? "exist" : "ok";
     }
 
-    // 20260320 아이디/비밀번호 찾기 추가
-    // 아이디/비번 찾기 페이지 이동
+    // =====================================================================
+    // 11. 아이디/비밀번호 찾기 페이지 (GET)
+    // =====================================================================
     @GetMapping("/find")
     public void findGet() {
     }
 
-    // 1. 아이디 찾기 처리
+    // =====================================================================
+    // 12. 아이디 찾기 처리 (POST)
+    // =====================================================================
     @PostMapping("/find-id")
     public String findIdPost(String mname, String email, RedirectAttributes redirectAttributes) {
         String mid = memberService.findId(mname, email);
@@ -251,58 +316,81 @@ public class MemberController {
         return "redirect:/member/find";
     }
 
-    // 2. 비밀번호 찾기 (정보 확인 후 변경 페이지 이동)
+    // =====================================================================
+    // 13. 비밀번호 찾기 - 본인 확인 후 변경 페이지 이동 (POST)
+    // =====================================================================
     @PostMapping("/find-pw")
-    public String findPwPost(String mid, String email, Model model, RedirectAttributes redirectAttributes) {
+    /*public String findPwPost(String mid, String email, Model model, RedirectAttributes redirectAttributes) {
         log.info("비밀번호 찾기 시도: mid=" + mid + ", email=" + email);
 
         if (memberService.checkMemberForPw(mid, email)) {
-            // [수정 제안] Forward 방식 유지 시 model에 mid가 잘 담겨야 change-pw.html에서 사용 가능합니다.
             model.addAttribute("mid", mid);
             return "member/change-pw";
         }
 
-        // 실패 시 메시지 전달
+        log.warn("비밀번호 찾기 실패: 정보 불일치");
+        redirectAttributes.addFlashAttribute("errorPw", "fail");
+        return "redirect:/member/find";
+    }*/
+    public String findPwPost(String mid, String email, RedirectAttributes redirectAttributes) {
+        log.info("비밀번호 찾기 시도: mid=" + mid + ", email=" + email);
+
+        if (memberService.checkMemberForPw(mid, email)) {
+            redirectAttributes.addFlashAttribute("verifiedMid", mid);
+            return "redirect:/member/modify";  // modify 페이지로 이동 + 모달 자동 오픈
+        }
+
         log.warn("비밀번호 찾기 실패: 정보 불일치");
         redirectAttributes.addFlashAttribute("errorPw", "fail");
         return "redirect:/member/find";
     }
 
-    // 3. 비밀번호 실제 변경 처리
+    // =====================================================================
+    // 14. 비밀번호 실제 변경 처리 (POST)
+    // =====================================================================
     @PostMapping("/change-pw")
     public String changePwPost(String mid, String newPw, RedirectAttributes redirectAttributes) {
         log.info("비밀번호 변경 처리 시작: mid=" + mid);
-
         memberService.updatePassword(mid, newPw);
-
-        // [수정 제안] 변경 완료 메시지를 담아서 로그인 창으로 보냅니다.
         redirectAttributes.addFlashAttribute("result", "pwChanged");
         return "redirect:/member/login";
     }
 
-
-
-
 }
 
 /*
- * ========== MemberController 설명 ==========
- * - 역할: 회원 관련 화면 요청 + 로그인/로그아웃 처리를 담당하는 컨트롤러
- * - URL 패턴: /member/**
+ * ========== MemberController 변경 이력 ==========
  *
- * [메서드]
- * - joinGet(): GET /member/join → 회원가입 화면 (join.html)
- * - joinPost(): POST /member/join → 회원가입 처리 (유효성 검증 + 중복 체크)
- * - loginGet(): GET /member/login → 로그인 화면 (login.html)
- * - loginPost(): POST /member/login → 로그인 처리 (세션 방식, loginInfo 저장)
- * - logout(): GET /member/logout → 로그아웃 (세션 무효화)
- * - myPage(): GET /member/mypage → 마이페이지 (dto 전달)
- * - modifyGet(): GET /member/modify → 정보 수정 화면
- * - modifyPost(): POST /member/modify → 정보 수정 처리
- * - checkId(): GET /member/checkId → 아이디 중복 체크 (@ResponseBody, AJAX용)
- * - checkEmail(): GET /member/checkEmail → 이메일 중복 체크 (@ResponseBody, AJAX용)
- * - findGet(): GET /member/find → 아이디/비밀번호 찾기 페이지
- * - findIdPost(): POST /member/find-id → 아이디 찾기 처리 (이름+이메일)
- * - findPwPost(): POST /member/find-pw → 비밀번호 찾기 본인확인 → 비밀번호 변경 페이지로 이동
- * - changePwPost(): POST /member/change-pw → 비밀번호 실제 변경 처리
+ * [20260323 수정 내용]
+ * 1. logout()
+ *    - session.invalidate() 로 서버 세션 무효화
+ *    - Cookie maxAge=0 으로 브라우저 JSESSIONID 쿠키 직접 삭제
+ *
+ * 2. myPage()
+ *    - void → String 반환으로 변경
+ *    - 세션 loginInfo 검증 추가 (없으면 로그인 페이지로 redirect)
+ *
+ * 3. modifyPost()
+ *    - HttpSession 파라미터 추가
+ *    - DB 수정 완료 후 세션 loginInfo 최신 정보로 갱신
+ *    - (갱신 안 하면 수정 후 마이페이지 redirect 시 loginInfo null로 튕김)
+ *
+ * 4. loginPost()
+ *    - dest 기능 유지 (인터셉터에서 저장한 이전 목적지로 로그인 후 이동)
+ *
+ * ========== MemberController 메서드 목록 ==========
+ * - joinGet()       : GET  /member/join       → 회원가입 화면
+ * - joinPost()      : POST /member/join       → 회원가입 처리
+ * - loginGet()      : GET  /member/login      → 로그인 화면
+ * - loginPost()     : POST /member/login      → 로그인 처리 (세션 저장 + dest 처리)
+ * - logout()        : GET  /member/logout     → 로그아웃 (세션 무효화 + 쿠키 삭제)
+ * - myPage()        : GET  /member/mypage     → 마이페이지 (세션 검증)
+ * - modifyGet()     : GET  /member/modify     → 정보 수정 화면
+ * - modifyPost()    : POST /member/modify     → 정보 수정 처리 (세션 갱신)
+ * - checkId()       : GET  /member/checkId    → 아이디 중복 체크 (AJAX)
+ * - checkEmail()    : GET  /member/checkEmail → 이메일 중복 체크 (AJAX)
+ * - findGet()       : GET  /member/find       → 아이디/비밀번호 찾기 페이지
+ * - findIdPost()    : POST /member/find-id    → 아이디 찾기 처리
+ * - findPwPost()    : POST /member/find-pw    → 비밀번호 찾기 본인확인
+ * - changePwPost()  : POST /member/change-pw  → 비밀번호 변경 처리
  */

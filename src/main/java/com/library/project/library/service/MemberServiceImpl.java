@@ -41,10 +41,15 @@ public class MemberServiceImpl implements MemberService {
         Member member = result.orElseThrow(); // 데이터 없으면 예외 발생
 
         // ModelMapper로 변환 후 role 수동 세팅
-        MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
+        /*MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
         memberDTO.setRole(member.getRole().name()); // ← enum → String 변환
         // 엔티티를 DTO로 변환하여 반환
-        return modelMapper.map(member, MemberDTO.class);
+        return modelMapper.map(member, MemberDTO.class);*/
+
+        // 20260323 수정
+        MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
+        memberDTO.setRole(member.getRole().name());
+        return memberDTO; // ← 세팅한 거 그대로 반환
     }
 
     @Override

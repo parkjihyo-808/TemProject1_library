@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
+
 <body>
 <link rel="stylesheet" href="/css/busan-library-common.css">
 
@@ -20,7 +21,9 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold">아이디</label>
                             <input type="text" name="mid" class="form-control form-control-lg"
-                                   placeholder="ID를 입력하세요" required autofocus>
+                                   placeholder="ID를 입력하세요"
+                                   th:value="${savedMid}"
+                                   required autofocus>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">비밀번호</label>
@@ -28,11 +31,9 @@
                                    placeholder="Password" required>
                         </div>
 
-                        <!-- 로그인 상태 유지(Remember Me) 추가 (선택사항) -->
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me">
-                            <label class="form-check-label small text-muted" for="rememberMe">로그인 상태 유지</label>
-                        </div>
+                        <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe"
+                               th:checked="${savedMid != null && !savedMid.isEmpty()}">
+                        <label class="form-check-label small text-muted" for="rememberMe">아이디 저장</label>
 
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-primary btn-lg fw-bold">로그인</button>
@@ -75,10 +76,8 @@
         }
 
         // 3. 로그아웃 확인
-        const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.has('logout')) {
-            alert("정상적으로 로그아웃 되었습니다.");
-        }
+        const logout = /*[[${logout}]]*/ null;
+        if (logout) { alert("정상적으로 로그아웃 되었습니다."); }
     };
 </script>
 </body>

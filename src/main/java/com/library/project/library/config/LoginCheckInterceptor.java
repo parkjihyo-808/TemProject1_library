@@ -31,7 +31,11 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             HttpSession newSession = request.getSession(true);
             String dest = request.getRequestURI() +
                     (request.getQueryString() != null ? "?" + request.getQueryString() : "");
-            newSession.setAttribute("dest", dest);
+
+            if (!dest.contains(".css") && !dest.contains(".js") && !dest.contains(".ico")
+                    && !dest.contains(".png") && !dest.contains(".jpg")) {
+                newSession.setAttribute("dest", dest);
+            }
 
             response.sendRedirect("/member/login");
             return false;

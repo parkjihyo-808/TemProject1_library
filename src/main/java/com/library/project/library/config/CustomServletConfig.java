@@ -34,7 +34,17 @@ public class CustomServletConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginCheckInterceptor()) // 인터셉터 클래스 이름 확인!
-                .addPathPatterns("/member/mypage", "/member/modify") // 로그인이 필요한 주소들 "/todo/**"
+                .addPathPatterns( // 로그인이 필요한 주소들 "/todo/**"
+//                        "/member/mypage", // 마이페이지
+//                        "/member/modify", // 정보수정
+                        "/member/**",           // 회원 모든페이지
+                        "",                     // 나의 대출내역
+                        "/user_rentals",        // 나의 문의내역
+                        "",                     // 나의 희망도서
+                        "/apply/myFacilityList", // 나의 시설예약
+                        "/mypage/apply-list"      // 나의 행사강좌
+
+                )
                 .excludePathPatterns(
                         "/member/login",
                         "/member/join",
