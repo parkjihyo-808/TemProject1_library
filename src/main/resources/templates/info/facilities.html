@@ -1,44 +1,49 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>시설 현황</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/info/basic}">부산 IT 도서관</a>
-        <div class="navbar-nav">
-            <a class="nav-link" th:href="@{/info/basic}">자료현황</a>
-            <a class="nav-link" th:href="@{/info/organization}">조직&업무</a>
-            <a class="nav-link active" th:href="@{/info/facilities}">시설현황</a>
-            <a class="nav-link" th:href="@{/info/map}">찾아오시는 길</a>
+<div layout:fragment="content">
+    <h2 class="mb-4 fw-bold">시설 현황</h2>
+    <hr>
+    <div class="mb-5">
+        <h4 class="border-start border-primary border-4 ps-2 mb-4 fw-bold">■ 대관 시설 현황</h4>
+        <div class="table-responsive shadow-sm">
+            <table class="table table-bordered text-center align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>구분</th>
+                    <th>위치</th>
+                    <th>좌석수</th>
+                    <th>비고</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="fw-bold">회의실</td>
+                    <td>1층</td>
+                    <td>80석</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">전시실</td>
+                    <td>1층</td>
+                    <td>-</td>
+                    <td>작품 전시 전용</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">극장</td>
+                    <td>지하 1층</td>
+                    <td>150석</td>
+                    <td>그랜드 피아노 구비</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-</nav>
-
-<div class="container mt-5">
-    <h3 class="border-bottom pb-2 mb-4">층별 시설 안내</h3>
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-header bg-primary text-white text-center">지상 2층 ~ 3층</div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong>3F</strong> : 제1열람실, PC 존, 세미나실</li>
-                    <li class="list-group-item"><strong>2F</strong> : 종합자료실, 정기간행물실</li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-header bg-secondary text-white text-center">지하 1층 ~ 지상 1층</div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong>1F</strong> : 어린이자료실, 북카페, 안내데스크</li>
-                    <li class="list-group-item"><strong>B1</strong> : 보존서고, 식당, 주차장</li>
-                </ul>
-            </div>
-        </div>
+    <div class="text-center mt-5">
+        <a th:href="@{/info}" class="btn btn-dark px-5">메인으로 돌아가기</a>
     </div>
 </div>
 </body>
