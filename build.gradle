@@ -85,8 +85,11 @@ dependencies {
     implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.21'
 
     // 8
-    // 스프링 시큐리티, 버전.
-    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
+    // 8. 스프링 시큐리티 추가 (이게 있어야 Principal과 SecurityConfig를 쓸 수 있어!)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // 타임리프에서 시큐리티 태그(로그인 여부 확인 등)를 쓰기 위한 도구
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 //    implementation("org.springframework.boot:spring-boot-starter-security:3.5.11")
 
 
