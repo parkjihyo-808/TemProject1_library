@@ -97,7 +97,7 @@
         }
 
         /* 헤더 높이(70px) 기준으로 로고랑 동일하게 맞춤 */
-        @media (max-width: 1024px) {
+        @media (max-width: 1199px) {
             .header-util-menu {
                 display: none;
             }
@@ -159,7 +159,7 @@
                 <li><a href="/inquiry/list">문의사항</a></li>
             </ul>
             <ul class="header-inner list-unstyled d-flex flex-column gap-4 col-2" data-index="4">
-                <li><a href="/info/greeting">인사말</a></li>
+                <li><a href="/info">인사말</a></li>
                 <li><a href="/info/history">연혁</a></li>
                 <li><a href="/info/organization">조직·업무</a></li>
                 <li><a href="/info/basic">자료현황</a></li>
@@ -282,7 +282,7 @@
         <li class="sidebar-item">
             <span class="sidebar-tap">도서관안내</span>
             <ul class="sidebar-sub list-unstyled">
-                <li><a href="/info/greeting">인사말</a></li>
+                <li><a href="/info">인사말</a></li>
                 <li><a href="/info/history">연혁</a></li>
                 <li><a href="/info/organization">조직·업무</a></li>
                 <li><a href="/info/basic">자료현황</a></li>
@@ -308,7 +308,7 @@
     </ul>
 </nav>
 
-<th:block th:unless="${currentURI == '/'}">
+<!--<th:block th:unless="${currentURI == '/'}">
     <div id="page-title" class="d-flex align-items-center justify-content-center fw-bold fs-4" style="margin-top: 100px; height: 100px; background-color: #0d6efd; color:#ffffff;" th:switch="${currentURI}">
         <span th:case="'/book/booklist'" th:text="${param.sort != null and #strings.toString(param.sort) == 'regDate'} ? '새로 들어온 책'
          : (${param.sort != null and #strings.toString(param.sort) == 'rental'} ? '대출이 많은 책'
@@ -331,6 +331,43 @@
         <span th:case="'/info/map'">찾아오시는길</span>
         <span th:case="'/user_rentals'">내 대출 현황</span>
         <span th:case="*">-</span>
+    </div>
+</th:block>-->
+
+<!-- [startsWith 버전] 원본(th:case) 아래에 백업용으로 작성 -->
+<th:block th:unless="${currentURI == '/'}">
+    <div id="page-title" class="d-flex align-items-center justify-content-center fw-bold fs-4" style="margin-top: 100px; height: 100px; background-color: #0d6efd; color:#ffffff;">
+        <span th:if="${currentURI.startsWith('/book/')}"
+              th:text="${param.sort != null and #strings.toString(param.sort) == 'regDate'} ? '새로 들어온 책'
+              : (${param.sort != null and #strings.toString(param.sort) == 'rental'} ? '대출이 많은 책'
+              : (${param.sort != null and #strings.toString(param.sort) == 'recommend'} ? '추천하는 책'
+              : '도서 검색'))">도서 검색</span>
+        <span th:if="${currentURI.startsWith('/apply/wishBook')}" th:text="'비치희망도서'"></span>
+        <span th:if="${currentURI.startsWith('/apply/spaceReservation')}" th:text="'시설예약'"></span>
+        <span th:if="${currentURI.startsWith('/info/donation')}" th:text="'기증·납본'"></span>
+        <span th:if="${currentURI.startsWith('/event/list')}" th:text="'이달의행사'"></span>
+        <span th:if="${currentURI.startsWith('/event/lecture')}" th:text="'세미나·강좌'"></span>
+        <span th:if="${currentURI.startsWith('/event/cinema')}" th:text="'주말극장'"></span>
+        <span th:if="${currentURI.startsWith('/notice/')}" th:text="'공지사항'"></span>
+        <span th:if="${currentURI.startsWith('/inquiry/')}" th:text="'문의사항'"></span>
+        <span th:if="${currentURI =='/info' or currentURI == '/info/'}" th:text="'인사말'"></span>
+        <span th:if="${currentURI.startsWith('/info/history')}" th:text="'연혁'"></span>
+        <span th:if="${currentURI.startsWith('/info/organization')}" th:text="'조직·업무'"></span>
+        <span th:if="${currentURI.startsWith('/info/basic')}" th:text="'자료현황'"></span>
+        <span th:if="${currentURI.startsWith('/info/facilities')}" th:text="'시설현황'"></span>
+        <span th:if="${currentURI.startsWith('/info/guide')}" th:text="'이용안내'"></span>
+        <span th:if="${currentURI.startsWith('/info/map')}" th:text="'찾아오시는길'"></span>
+
+        <span th:if="${currentURI.startsWith('/member/login')}" th:text="'로그인'"></span>
+        <span th:if="${currentURI.startsWith('/member/join')}" th:text="'회원가입'"></span>
+        <span th:if="${currentURI.startsWith('/member/find')}" th:text="'아이디/비밀번호 찾기'"></span>
+        <span th:if="${currentURI.startsWith('/member/mypage')}" th:text="'내 정보 관리'"></span>
+        <span th:if="${currentURI.startsWith('/member/modify')}" th:text="'회원 정보 수정'"></span>
+        <span th:if="${currentURI.startsWith('/user_rentalse')}" th:text="'대출내역'"></span>
+        <span th:if="${currentURI.startsWith('/member/inquiryList')}" th:text="'문의내역'"></span>
+        <span th:if="${currentURI.startsWith('/member/applyMyWishBook')}" th:text="'희망도서'"></span>
+        <span th:if="${currentURI.startsWith('/member/myFacilityList')}" th:text="'내 시설 예약 내역'"></span>
+        <span th:if="${currentURI.startsWith('/member/apply-list')}" th:text="'행사강좌'"></span>
     </div>
 </th:block>
 
