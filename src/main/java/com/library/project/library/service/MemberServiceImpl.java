@@ -9,7 +9,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -127,6 +129,23 @@ public class MemberServiceImpl implements MemberService {
         member.change(member.getMname(), member.getEmail(), member.getRegion(), newPw);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberDTO> searchMembers(String keyword) {
+        // 1. 반환 타입을 List<Member>로 받았으므로 바로 stream 사용 가능
+        return memberRepository.searchByKeyword(keyword)
+                .stream()
+                .map(m -> {
+                    MemberDTO dto = modelMapper.map(m, MemberDTO.class);
+
+                    // 이제 m은 Member 객체이므로 getRole() 호출이 가능합니다!
+                    if (m.getRole() != null) {
+                        dto.setRole(m.getRole().name());
+                    }
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
 
 }
 

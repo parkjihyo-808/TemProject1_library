@@ -213,11 +213,19 @@
             <a th:href="@{/member/join}">회원가입</a>
         </th:block>
         <th:block th:if="${session.loginInfo != null}">
-            <span class="member-name">
-                <span th:text="${session.loginInfo.mname}">홍길동</span>님
-    <!--            <span class="badge-status">정상</span>-->
-            </span>
+    <span class="member-name">
+        <span th:text="${session.loginInfo.mname}">홍길동</span>님
+        <span class="badge-status">정상</span>
+    </span>
             <span class="divider">|</span>
+            <!-- ADMIN이면 관리자 페이지 버튼 추가 -->
+            <th:block th:if="${session.loginInfo.role == 'ADMIN'}">
+                <a th:href="@{/rentals}"
+                   style="color:#dc3545;font-weight:700;">
+                    관리자 페이지
+                </a>
+                <span class="divider">|</span>
+            </th:block>
             <a th:href="@{/member/logout}">로그아웃</a>
             <span class="divider">|</span>
             <a th:href="@{/member/mypage}">내 서재</a>
@@ -320,19 +328,7 @@
         <span th:case="'/info/facilities'">시설현황</span>
         <span th:case="'/info/guide'">이용안내</span>
         <span th:case="'/info/map'">찾아오시는길</span>
-
-        <span th:case="'/member/login'">로그인</span>
-        <span th:case="'/member/join'">회원가입</span>
-        <span th:case="'/member/find'">아이디 찾기</span>
-        <span th:case="'/member/find-pw-page'">비밀번호 찾기</span>
-        <span th:case="'/member/mypage'">내 정보 관리</span>
-        <span th:case="'/member/modify'">회원 정보 수정</span>
-        <span th:case="'/user_rentalse'">대출내역</span>
-        <span th:case="'/member/inquiryList'">문의내역</span>
-        <span th:case="'/member/applyMyWishBook'">희망도서</span>
-        <span th:case="'/member/myFacilityList'">내 시설 예약 내역</span>
-        <span th:case="'/member/apply-list'">행사강좌</span>
-
+        <span th:case="'/user_rentals'">내 대출 현황</span>
         <span th:case="*">-</span>
     </div>
 </th:block>-->

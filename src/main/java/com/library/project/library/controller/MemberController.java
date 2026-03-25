@@ -14,13 +14,15 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/member")
@@ -31,6 +33,22 @@ public class MemberController {
 
     private final MemberService memberService;
     private final InquiryService inquiryService;
+
+    @GetMapping("/searchByMid")
+    @ResponseBody
+// MemberDTO -> List<MemberDTO> 로 변경
+    public ResponseEntity<List<MemberDTO>> searchByMid(@RequestParam String mid) {
+        try {
+            // 서비스에서 검색 결과 리스트를 가져옵니다.
+            List<MemberDTO> list = memberService.searchMembers(mid);
+
+            // 결과가 없어도 빈 리스트 [] 를 보냅니다.
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            e.printStackTrace(); // 서버 콘솔에서 진짜 에러 확인용
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     // =====================================================================
     // 1. 회원가입 화면 (GET) - join.html 연결
